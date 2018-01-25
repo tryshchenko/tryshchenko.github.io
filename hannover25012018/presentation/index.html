@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>Building Performant APIs with Koa.js</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+	</head>
+
+	<body>
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section data-background-image="img/title.jpg">
+					<h3>Building Performant API with Koa.js</h3>
+					<p>
+						<small><div>Tryshchenko Oleksandr @ <a href="//tryshchenko.com" title="Smashicons">DataArt</a></small>
+					</p>
+				</section>
+
+				<section>
+					<h2>Agenda</h2>
+					<p>
+						<ul>
+							<li>What?</li>
+							<li>Why?</li>
+							<li>How?</li>
+						</ul>
+					</p>
+				</section>
+
+				<section>
+					<h3>"Hey, guys, let's try koa?"</h3>
+					<img src="./img/wtf.gif">
+				</section>
+
+				<section data-background="#fff">
+					<h3>Koa</h3>
+					<img src="./img/gtrends.png" alt="">
+				</section>
+
+				<section data-background="#fff">
+					<h3>Express</h3>
+					<img src="./img/gtrends-express.png" alt="">
+				</section>
+
+				<section data-background="#fff">
+					<h3>Overall</h3>
+					<img src="./img/comparison-legend.png" alt="">
+				</section>
+
+				<section data-background="#fff">
+					<h3>Overall</h3>
+					<img src="./img/comparison.png" alt="">
+				</section>
+
+				<section data-background="#fff">
+					<h3>Contributions</h3>
+					<img src="./img/contributions.png" alt="">
+				</section>
+
+				<section>
+					<h3>What is Koa</h3>
+					<table style="font-size: 28px;">
+						<thead>
+							<tr>
+								<td></td>
+								<td>Middleware<br>Core</td>
+								<td>Routing</td>
+								<td>Template<br>Engine</td>
+								<td>HTTP<br>Utilities</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Koa</td>
+								<td class="yellow">+</td>
+								<td>-</td>
+								<td>-</td>
+								<td>-</td>
+							</tr>
+							<tr>
+								<td>Express</td>
+								<td class="yellow">+</td>
+								<td class="yellow">+</td>
+								<td class="yellow">+</td>
+								<td class="yellow">+</td>
+							</tr>
+							<tr>
+								<td>Connect</td>
+								<td class="yellow">+</td>
+								<td>-</td>
+								<td>-</td>
+								<td>-</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+				<section>
+					<h2>Why Koa? 💡</h2>
+				</section>
+
+				<section>
+					<h3>Event Loop</h3>
+
+<pre>
+<code class="hljs" data-trim>
+console.log(1);
+setTimeout(() => console.log(2), 0);
+console.log(3);
+
+// 1
+// 3
+// 2
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Async</h3>
+<pre>
+<code class="hljs" data-trim>
+const chownCallback = () => ...;
+fs.chown(path, uid, gid, chownCallback);
+</code>
+</pre>
+		
+				</section>
+
+				<section>
+					<h3>Sync</h3>
+<pre>
+<code class="hljs" data-trim>
+fs.chownSync(path, uid, gid);
+/** some logic after chown */
+</code>
+</pre>
+		
+				</section>
+
+				<section data-background="./img/distracted-man.jpg">
+				</section>
+
+				<section>
+					<h3>Async</h3>
+					<p>
+						<ul>
+							<li>Callbacks</li>
+							<li>Promises</li>
+							<li>Generators</li>
+							<li>Async / Await</li>
+							<li>Observables</li>
+						</ul>
+					</p>
+				</section>
+
+				<section data-background="./img/pasta.jpg">
+
+				</section>
+
+				<section>
+					<h2>Async</h2>
+					<p>
+						<ul>
+							<li style="color: grey">Callbacks</li>
+							<li style="color: grey">Promises</li>
+							<li>Generators (koa.js 1)</li>
+							<li>Async / Await (koa.js 2)</li>
+							<li style="color: grey">Observables</li>
+						</ul>
+					</p>
+				</section>
+
+				<section data-background="#12355a">
+					<h3>Async / Await</h3>
+				</section>
+
+				<section>
+					<h3>Async / Await</h3>
+<pre>
+<code class="hljs" data-trim>
+fetch('https://someapi.somedomain/something')
+    .then(response => response.json())
+    .then(json => console.log(json));
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Async / Await</h3>
+<pre>
+<code class="hljs" data-trim>
+const res = await fetch('https://someapi.somedomain/something');
+const json = await res.json();
+console.log(json);
+</code>
+</pre>
+				</section>
+
+				<section>
+					<img src="./img/shame.gif" alt="">
+				</section>
+
+				<section>
+					<h3>Middlewares</h3>
+					<ul>
+						<li>Context</li>
+						<li>Callback</li>
+					</ul>
+				</section>
+
+				<section data-background="#fff">
+					<h3>Middlewares</h3>
+					<img src="./img/middlewares.png" alt="">
+				</section>
+
+<!-- 				<section>
+					<h3>Snow...</h3>
+					<img src="./img/mudman.jpg" alt="">
+				</section>
+ -->
+				<section>
+					<h3>Middleware Architecture</h3>
+					<ul>
+						<li>Shared Context</li>
+						<li>Encapsulated request/response</li>
+						<li>Synchronous Execution (Cascading)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Scaffold</h3>
+<pre>
+<code class="hljs" data-trim>
+const Koa = require('koa');
+const app = new Koa();
+
+app.use(async ctx => {
+  ctx.body = 'Hello Hannover!';
+});
+
+app.listen(3000);
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Middleware</h3>
+<pre>
+<code class="hljs" data-trim>
+const Koa = require('koa');
+const app = new Koa();
+
+app.use(async (ctx, next) => {
+  const res = await nextElections();
+  ctx.body = res;
+  ...
+  await next();
+});
+
+app.listen(3000);
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Writing a middleware</h3>
+<pre>
+<code class="hljs" data-trim>
+(ctx, next) => {}
+</code>
+</pre>
+				</section>
+
+<!-- 				<section data-background="img/dancing.jpg">
+					<h3>Writing an API example</h3>
+				</section> -->
+
+				<section>
+					<h3>What to take care about</h3>
+					<ul>
+						<li>Concurrency</li>
+						<li>Database</li>
+						<li>HTTP</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Libs Quality</h3>
+					<img src="./img/quality.gif" alt="">
+				</section>
+
+				<section>
+					<h3>Express?</h3>
+					<ul>
+						<li>Incompatible API's</li>
+						<li>Existing libraries "adapters"</li>
+						<li>Simple process of porting</li>
+					</ul>
+				</section>
+
+				<section data-background="#000">
+					<h3>Performance isn't about tools...</h3>
+				</section>
+
+				<section data-background="./img/design.jpg">
+					
+				</section>
+
+				<section>
+					<h3>Performance: Databases</h3>
+					<ul>
+						<li>Use cache for database layer</li>
+						<li class="inactive">Optimize your DB requests</li>
+						<li class="inactive">Take care about DB itself</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Performance: HTTP</h3>
+					<ul>
+						<li>Cache answers for frequent requests</li>
+						<li>Do complicated operations separately</li>
+						<li>API optimizations</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Peformance: Queues</h3>
+				</section>
+
+
+				<section data-background="#fff">
+					<h5>Queue</h5>
+					<img class="plain-img" src="./img/queues-diagram.png">
+				</section>
+
+				<section>
+					<h2>Queues</h2>
+					<ul>
+						<li>Work with API's</li>
+						<li>I/O Operations</li>
+						<li>Complex DB requests</li>
+						<li>Sending emails</li>
+						<li>...</li>
+					</ul>
+				</section>
+
+				<section data-background="#fff">
+					<h3>Performance: Caching</h3>
+					<img class="plain-img" src="./img/cache.png" alt="">
+				</section>
+
+				<section>
+					<h3>Caching</h3>
+					<p>@TODO write something about how freaking terrible situation is in koa ecosystem</p>
+				</section>
+
+				<section>
+					<h3>Error Handling</h3>
+					<img src="./img/error-handling.gif" alt="">
+				</section>
+
+				<section>
+					<h3>What do I use</h3>
+					<ul>
+						<li><a href="https://github.com/expressjs/morgan">Morgan</a></li>
+						<li><a href="https://github.com/foreverjs/forever">Forever</a></li>
+						<li class="fragment">Node Domain 😳</li>
+						<li class="fragment">zone.js !</li>
+					</ul>
+				</section>
+
+				<section>
+					<img src="./img/security3.gif" alt="funny gif" style="width: 35%;">
+				</section>
+
+				<section>
+					<h3>Security</h3>
+				</section>
+
+				<section>
+					<h3>Handpicked</h3>
+					<ul>
+						<li>CSRF <a href="https://github.com/koajs/csrf">koa/csrf</a></li>
+						<li>Password Encryption <a href="https://www.npmjs.com/package/bcrypt">bcrypt</a></li>
+						<li>Escaping <a href="https://www.npmjs.com/package/escape-html">escape-html</a></li>
+						<li>Input valiation <a href="https://github.com/chriso/validator.js">validator.js</a></li>
+						<li>Headers <a href="https://www.npmjs.com/package/helmet">helmet</a></li>
+						<li>Audit <a href="https://nodesecurity.io/">nsp</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Questions?</h3>
+				</section>
+
+				<section data-background="img/pigeon.jpg" class="dimmed">
+					<h3>Send me a Pigeon</h3>
+					<ul>
+						<li class="fat-li">facebook / <a href="https://www.facebook.com/tryshchenko">tryshchenko</a></li>
+						<li class="fat-li">github / <a href="https://github.com/tryshchenko">tryshchenko</a></li>
+						<li class="fat-li">twitter / <a href="https://twitter.com/tryshchenko">tryshchenko</a></li>
+						<li class="fat-li"><a href="http://tryshchenko.com">tryshchenko.com</a></li>
+						<li class="fat-li"><a href="http://otry.eu" style="color: #ffff41;">otry.eu</a></li>
+					</ul>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+		<script src="js/initialize.js"></script>
+	</body>
+</html>
