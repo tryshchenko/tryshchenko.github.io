@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>FP in JS With Monads on Angular, Rx.js, Monet.js example</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+	</head>
+
+	<body>
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section data-background-image="img/title.jpg" class="title-dark-slide">
+					<h3>Currying with <span style="color: #fdff77;">Ramda</span></h3>
+				</section>
+
+				<section data-background="./img/forest.jpg">
+					<p>
+						<small><div>Tryshchenko Oleksandr @ dataart</small>
+						<small><div><a href="http://tryshchenko.com" style="color: #fdff77;">tryshchenko.com</a></small>
+					</p>
+					<img class="plain-img" width="150" src="./img/logo.svg">
+
+				</section>
+
+				<section>
+					<h3>Functional Programming</h3>
+					<ul>
+						<li class="fragment">It isn't new</li>
+						<li class="fragment">You shouldn't use it just because it's trendy</li>
+					</ul>
+				</section>
+
+				<section>
+					<ul>
+						<li class="fragment">1 + 2</li>
+						<li class="fragment">R.add(1)(2)</li>
+						<li class="fragment">Maybe.Just(1).ap(Maybe.Just(2).map(R.add)).just();</li>
+					</ul>
+					<img src="./img/superhuman.jpg" class="fragment" style="width: 30%;">
+				</section>
+
+				<section>
+					<h3>Please, don't make things overcomplicated</h3>
+					<div class="fragment">
+						<img src="https://media.giphy.com/media/qA9BnxUPmgWgU/giphy.gif">
+						<p style="font-size: 8px; color: #888">Taken from https://giphy.com/gifs/puss-prewedding-summerbird-qA9BnxUPmgWgU</p>
+					</div>
+
+				</section>
+
+				<section>
+					<h3>Pure / Impure</h3>
+<pre>
+<code class="hljs" data-trim>
+const x = 1;
+const y = 2;
+
+const impureFunction = () => x + y;
+const pureFunction = (x, y) => x + y;
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Pure / Impure</h3>
+<pre>
+<code class="hljs" data-trim>
+const a = {b: 1};
+
+const impureFunction = () => a.b++;
+const impureFunctionEither = (a) => a.b++;
+const pureFunction = (a) => 
+	Object.assign({}, a, {b: a.b + 1});
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Pure / Impure</h3>
+<pre>
+<code class="hljs" data-trim>
+const a = {b: 1};
+
+const impureFunction = () => a.b++;
+const impureFunctionEither = (a) => {
+  a.b++;
+  return a;
+}
+const pureFunction = (a) => 
+	Object.assign({}, a, {b: a.b + 1});
+</code>
+</pre>
+				</section>
+
+				<section>
+					Real life example - Redux Reducers
+				</section>
+
+				<section>
+					<h3>Mutations</h3>
+<pre>
+<code class="hljs" data-trim>
+const a = {b: 1};
+
+// mutation
+a.b = 2;
+[1, 3, 2].sort();
+
+// immutable
+const c = Object.assign({}, a, {b: 3});
+const newArr = [1, 2, 3].map(x => x * 2);
+</code>
+</pre>
+				</section>
+
+				<section>
+					Real life example - Redux state
+				</section>
+
+				<section>
+					<h3>Currying</h3>
+					<img style="width: 50%" src="./img/curry.jpg" class="plain-img">
+				</section>
+
+				<section>
+					<h3>Currying</h3>
+<pre>
+<code class="hljs" data-trim>
+const add = (a) => (b) => a + b;
+add(1)(5) === 6;
+</code>
+</pre>
+				</section>
+
+				<section>
+					<img src="./img/wtf.gif" style="width: 50%;">
+					<p style="font-size: 8px; color: #888">https://giphy.com/gifs/njl60xjwgrkWY</p>
+				</section>
+
+				<section>
+<pre>
+<code class="hljs" data-trim>
+const dbSaver = (dbConnection) => 
+	(obj) => dbConnection.save(obj);
+
+const save = dbBuilder(db);
+save({city: "Wrocław"});
+save({city: "Poznań"});
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h1>Ramda?</h1>
+				</section>
+
+				<section data-background="./img/forest.jpg">
+					<h1 class="fat" style="letter-spacing: 10px">246</h1>
+					<h3>Curried helpers</h3>
+				</section>
+
+				<section data-background="./img/forest.jpg">
+					<h3 class="fat">What is Ramda?</h3>
+					<ul>
+						<li class="fragment"><span style="color: yellow">246</span> Curried Helpers</li>
+						<li class="fragment">It partially overlaps with lodash</li>
+						<li class="fragment">But behavior is often different</li>
+					</ul>
+				</section>
+
+				<section data-background="./img/forest.jpg">
+					<h3>Curry</h3>
+<pre>
+<code class="hljs" data-trim>
+const addFn = (a, b, c) => a + b + c;
+
+const curriedAddFn = R.curry(addFn);
+curriedAddFn(1, 2)(3); // 6
+</code>
+</pre>
+				</section>
+
+				<section>
+<pre class="hljs" data-trim>
+<code>
+['3', '3', '3', '3'].map(parseInt);
+</code>
+</pre>
+
+<pre class="hljs fragment" data-trim>
+<code>
+// [3, NaN, NaN, NaN]
+</code>
+</pre>
+				</section>
+
+				<section>
+<pre class="hljs" data-trim>
+<code>
+const prsInt = R.curry(parseInt)(R.__, 10);
+['3', '3', '3', '3'].map(prsInt);
+
+// [3, 3, 3, 3]
+</code>
+</pre>
+
+<pre class="hljs fragment" data-trim>
+<code>
+const prsInt = (val) => parseInt(value, 10);
+['3', '3', '3', '3'].map(prsInt);
+
+// [3, 3, 3, 3]
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Benefitial? <span style="font-family: ">😳</span></h3>
+<pre class="hljs" data-trim>
+<code>
+R.curry(parseInt)(R.__, 10);
+</code>
+</pre>
+
+<pre class="hljs" data-trim>
+<code>
+(val) => parseInt(value, 10);
+</code>
+</pre>
+				</section>
+
+				<section >
+					<h3>R.__</h3>
+				</section>
+
+<!-- 				<section data-background="./img/forest.jpg">
+					<h3 class="fat">Map!</h3>
+					<ul>
+						<li>Behaves like a functor</li>
+						<li>Map</li>
+					</ul>
+				</section> -->
+
+				<section>
+					<h3>Conditional</h3>
+				</section>
+
+				<section>
+					<h3>All and Equals</h3>
+<pre>
+<code class="hljs" data-trim>
+if (var1 === true 	
+  && var2 === true 
+  && var3 === true 
+  && var4 === true) {
+	...
+}
+</code>
+</pre>
+				</section>
+
+				<section>
+<pre>
+<code class="hljs" data-trim>
+const var1 = 1;
+const var2 = [1]
+if (var1 && var2) {
+  console.log('coercion loves you ;)');
+};
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>All and Equals</h3>
+<pre>
+<code class="hljs" data-trim>
+const isTruthy = R.equals(true);
+R.all(isTruthy)([var1, var2, var3, var4]);
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Both</h3>
+<pre>
+<code class="hljs" data-trim>
+const min = R.gte(R.__, 0);
+const max = R.lte(R.__, 100);
+const isPercent = R.both(min, max);
+isPercent(10); // true
+isPercent(-1); // false
+isPercent(101); // false
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Both</h3>
+<pre>
+<code class="hljs" data-trim>
+const notCat = (x) => x !== 'dog';
+const notDog = (x) => x !== 'cat';
+
+const isNotCatAndSeal = R.both(notCat, notDog);
+
+isNotCatAndSeal('seal'); // true
+isNotCatAndSeal('dog'); // false
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>allPass</h3>
+<pre>
+<code class="hljs" data-trim>
+const isDeveloper = R.propEq('role', 'developer');
+const isLocatedWroclaw = R.propEq('location', 'Wroclaw');
+const isGonnaBeHired = R.allPass(
+	[isDeveloper, isLocatedWroclaw]
+);
+
+isGonnaBeHired({role: 'Developer', location: 'Berlin'});
+//=> false
+isGonnaBeHired({role: 'Developer', location: 'Wroclaw'});
+//=> true
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Apply</h3>
+<pre>
+<code class="hljs" data-trim>
+const maxNum = R.apply(Math.max, R.__);
+maxNum([1, 5, 3]); // 5
+maxNum([9, 9, 3]); // 9
+</code>
+</pre>
+				</section>
+
+				<section data-background="./img/deep.jpg">
+					<h1 class="thin">Deep clone, merge</h1>
+				</section>
+
+
+				<section>
+					<h3>countBy</h3>
+<pre>
+<code class="hljs" data-trim>
+const numbers = [1.0, 1.1, 2.0, 3.0, 2.2];
+R.countBy(Math.floor)(numbers);
+//=> {'1': 2, '2': 2, '3': 1}
+
+const letters = ['a', 'b', 'A'];
+R.countBy(R.toLower)(letters);
+//=> {'a': 2, 'b': 1}
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>defaultTo</h3>
+<pre>
+<code class="hljs" data-trim>
+const valOrNa = R.defaultTo('n/a');
+
+defaultTo42(null);  //=> 'n/a'
+defaultTo42(undefined);  //=> 'n/a'
+defaultTo42('Hey there!');  //=> 'Hey there!'
+defaultTo42(NaN); //=> 'n/a'
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>DropRepeats <span class="fragment">😉</span></h3>
+<pre>
+<code class="hljs" data-trim>
+R.dropRepeats([1, 1, 2, 4, 4, 2]); //=> [1, 2, 4, 2]
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>eqProps</h3>
+<pre>
+<code class="hljs" data-trim>
+const o1 = { a: 3, b: 2, c: 3 };
+const o2 = { a: 1, b: 'c', c: 3 };
+R.eqProps('a', o1, o2); //=> false
+R.eqProps('c', o1, o2); //=> true
+</code>
+</pre>
+				</section>
+
+				<section data-background="./img/deeper.jpg">
+					<h1 class="thin">Deeper</h1>
+				</section>
+
+				<section data-background="#fff">
+					<img src="./img/fucking.png" style="width: 70%;" class="plain-img">
+					<p style="font-size: 10px">
+						<a href="https://www.reddit.com/r/ProgrammerHumor/comments/6d3eqh/functional_programming_for_beginners/">https://www.reddit.com/r/ProgrammerHumor/comments/6d3eqh/functional_programming_for_beginners/</a>
+					</p>
+				</section>
+
+				<section>
+					<h3>Evolve</h3>
+<pre>
+<code class="hljs" data-trim>
+const obj = {
+	firstName: '  johny ',
+	data: {
+		elapsed: 100,
+		remaining: 1400
+	},
+	id:123
+};
+
+</code>
+</pre>
+				</section>
+
+				<section>
+<pre>
+<code class="hljs" data-trim>
+const transformations = {
+  firstName: R.pipe(R.trim, R.toUpper),
+  lastName: R.trim,
+  data: {
+  	elapsed: R.add(1),
+  	remaining: R.add(-1)
+  }
+};
+
+R.evolve(transformations, obj);
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Lenses</h3>
+				</section>
+
+				<section>
+					<h3>Inner Join</h3>
+<pre>
+<code class="hljs" data-trim>
+R.innerJoin(
+  (record, id) => record.id === id,
+  [{id: 824, name: 'Richie Furay'},
+  {id: 956, name: 'Dewey Martin'},
+  {id: 313, name: 'Bruce Palmer'},
+  {id: 456, name: 'Stephen Stills'},
+  {id: 177, name: 'Neil Young'}],
+  [177, 456, 999]
+);
+//=> [
+	{id: 456, name: 'Stephen Stills'},
+	{id: 177, name: 'Neil Young'}
+]
+</code>
+</pre>
+				</section>
+
+				<section>
+					<img src="./img/magic.gif" style="width: 50%">
+				</section>
+
+				<section>
+					<h3>Project</h3>
+<pre>
+<code class="hljs" data-trim>
+const user1 = {
+	name: 'Jack',
+	comments: 50,
+	posts: 1
+};
+const user2 = {
+	name: 'Fred',
+	comments: 12,
+	posts: 14
+};
+
+R.project(['name', 'posts'], [user1, user2]); //=> 
+[{name: 'Jack', posts: 1}, {name: 'Fred', posts: 14}]
+</code>
+</pre>
+				</section>
+
+				<section>
+<pre>
+<code class="hljs" data-trim>
+R.project(['name', 'posts'], [user1, user2]);
+</code>
+</pre>
+
+<pre>
+<code class="hljs" data-trim>
+SELECT name, posts FROM users;
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Path 😍 (kinda Elvis Operator)</h3>
+<pre>
+<code class="hljs" data-trim>
+R.path(['a', 'b'], {a: {b: 2}});
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>PathOr</h3>
+<pre>
+<code class="hljs" data-trim>
+R.pathOr('N/A', ['a', 'b'], {a: {b: 2}});
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Pipes</h3>
+					<img src="./img/warp-zone.jpg">
+				</section>
+
+				<section>
+					<h3>Pipe</h3>
+<pre>
+<code class="hljs" data-trim>
+const data = [
+ {a: { b: 5.12 } },
+ {a: { b: 7.1102 } }
+];
+const dataDiss = R.pathOr(0, ['a', 'b'], R.__);
+const test1 = dataDiss({a: { b: 5.12 }});
+const dataPipe = R.pipe(dataDiss, Math.floor, x => x * 2);
+const res = data.map(dataPipe); // [10, 14]
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Difference?</h3>
+<pre>
+<code class="hljs" data-trim>
+const dataPipe = R.pipe(dataDiss, Math.floor, x => x * 2);
+const res = data.map(dataPipe);
+// [10, 14]
+
+const res = data
+	.map(dataDiss)
+	.map(Math.floor)
+	.map(x => x * 2);
+// [10, 14]
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>R.propOr</h3>
+<pre>
+<code class="hljs" data-trim>
+const alice = {
+  name: 'ALICE',
+  age: 101
+};
+const favorite = R.prop('favoriteLibrary');
+const favoriteWithDefault = 
+	R.propOr('Ramda', 'favoriteLibrary');
+
+favorite(alice);  //=> undefined
+favoriteWithDefault(alice);  //=> 'Ramda'
+</code>
+</pre>
+				</section>
+
+				<section>
+					<h3>Flatten</h3>
+<pre>
+<code class="hljs" data-trim>
+R.flatten([1, 2, [3, 4], [5, [6, [7, 8], 9]]]);
+// [1, 2, 3, 4, 5, 6, 7, 8, 9];
+</code>
+</pre>
+				</section>
+
+				<section>
+					R.flatten ~ _.flattenDeep
+				</section>
+
+				<section>
+					<h3>Overlaps with lodash / underscore</h3>
+				</section>
+
+				<section>
+					<img src="./img/success.gif" style="width: 50%">
+				</section>
+
+
+				<section>
+					<h1>Questions?</h1>
+					<img src="./img/questions.gif">
+				</section>
+
+				<section data-background="img/pigeon.jpg" class="dimmed">
+					<h3>Send me a Pigeon</h3>
+					<ul>
+						<li class="fat-li">facebook / <a href="https://www.facebook.com/tryshchenko">tryshchenko</a></li>
+						<li class="fat-li">github / <a href="https://github.com/tryshchenko">tryshchenko</a></li>
+						<li class="fat-li">twitter / <a href="https://twitter.com/tryshchenko">tryshchenko</a></li>
+						<li class="fat-li"><a href="http://tryshchenko.com">tryshchenko.com</a></li>
+						<li class="fat-li"><a href="http://otry.eu" style="color: #ffff41;">otry.eu</a></li>
+					</ul>
+				</section>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+		<script src="js/initialize.js"></script>
+	</body>
+</html>
