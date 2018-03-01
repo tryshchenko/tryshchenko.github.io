@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>FP in JS With Monads on Angular, Rx.js, Monet.js example</title><meta name="author" content="Oleksandr Tryshchenko"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="stylesheet" href="css/reveal.css"><link rel="stylesheet" href="css/theme.css"><link rel="stylesheet" href="lib/css/zenburn.css"></head><body><div class="reveal"><div class="slides"><section data-background="./img/tea.jpg"><h3 class="title"><span class="primary">Functional JavaScript with</span> Monads</h3><p><small><div>Oleksandr Tryshchenko @ DataArt</div></small><small><a href="http://tryshchenko.com" style="color: yellow">tryshchenko.com</a> || <a href="http://otry.eu" style="color: yellow">otry.eu</a></small></p></section><section><p>Functional programming <span class="primary">is NOT</span> something new</p></section><section><p>You <span class="primary">do NOT</span> need to use FP just because it's "trendy"</p></section><section><img style="width: 50%" src="./img/shocked.gif"></section><section data-background="./img/title-dark.jpeg"><h1 style="background-color: black;">Monads</h1></section><section data-background="#000"><p>Find Similarities</p><img src="./img/useless.jpg" class="plain-img"></section><section>Well, Why Do I Need That?<ul class="pt50"><li class="fragment">Functional Programming</li><li class="fragment">Reactive Programming</li><li class="fragment"><i style="opacity: 0.5; font-style: inherit;">RP is not mandatory a FP 😈</i></li></ul></section><section>How To Add Numbers in JavaScript<ul class="pt50"><li class="fragment">1 + 2 <span class="fragment primary">Old School 👎</span></li><li class="fragment">R.add(1)(2) <span class="fragment primary">Better</li><li class="fragment">Maybe.Just(1).ap(Maybe.Just(2).map(R.add)).just();</li><span class="fragment primary">Perfection 🔥</span></ul></section><section>Please, don't overcomplicate <img src="./img/efficiency.gif" style="width: 50%;"></section><section>OOP Approach<pre>
+<code class="hljs" data-trim>
+const car = new BaseCar();
+
+car.installEngine();
+car.installWheels(15);
+car.installInterior('leather');
+car.paint('yellow');
+
+car.save();
+</code>
+</pre></section><section><p><i style="color: #8cf3ff;">c(</i><i style="color: #ffff6f;">b(</i><i style="color: #fb6b6b;">a(x)</i><i style="color: #ffff6f;">)</i><i style="color: #8cf3ff;">)</i></p><p class="fragment">Maybe( <i>x</i> ).bind(<i style="color: #fb6b6b;">a</i>).bind(<i style="color: #ffff6f;">b</i>).bind(<i style="color: #8cf3ff;">c</i>)</p></section><section><h3><i style="color: #fb6b6b;">a</i>, <i style="color: #ffff6f;">b</i>, <i style="color: #8cf3ff;">c</i> - Pure Functions</h3><p class="fragment">Do NOT access outer scope, do NOT mutate arguments.</p></section><section><p>FP Approach</p><pre>
+<code class="hljs" data-trim>
+const car = Monad.of(BaseCar)
+	.bind(installEngine)
+	.bind(installWheels(15))
+	.bind(installInterior('leather'))
+	.bind(paint('yellow'))
+	.flatten()
+</code>
+</pre></section><section><p><i style="color: #fb6b6b;">Function</i> Composition</p></section><section data-background="#12355a"><p>Monad Pattern</p></section><section><p style="font-size: 12px;">In functional programming, a monad is a design pattern that defines how functions, actions, inputs, and outputs can be used together to build generic types,[1] with the following organization:Define a data type, and how values of that data type are combined.Create functions that use the data type, and compose them together into actions, following the rules defined in the first step.A monad may encapsulate values of a particular data type, creating a new type associated with a specific additional computation, typically to handle special cases of the type. For example, the simple Maybe monad encapsulates variables which may have a null value, representing an option type, and automatically ensures that null values are not passed as arguments to functions that cannot handle them, serving as an alternative programming technique to throwing and catching exceptions when null values arise. Another example is the List monad, where the empty list is a constant value of type List, and the cons operator binds a plain value as the head of a previous list.The monad represents computations with a sequential structure: a monad defines what it means to chain operations together. This enables the programmer to build pipelines that process data in a series of steps (i.e. a series of actions applied to the data), in which each action is decorated with the additional processing rules provided by the monad.[2] A monad is defined by a return operator that creates values, and a bind operator used to link the actions in the pipeline; this definition must follow a set of axioms called monad laws, which are needed for the composition of actions in the pipeline to work properly.Monads allow a programming style where programs are written by putting together highly composable parts, combining in flexible ways the possible actions that can work on a particular type of data. As such, monads have been described as "programmable semicolons"; a semicolon is the operator used to chain together individual statements in many imperative programming languages,[2] thus the expression implies that extra code will be executed between the actions in the pipeline. Monads have also been explained with a physical metaphor as assembly lines, where a conveyor belt transports data between functional units and that transform it one step at a time.[3]Purely functional programs can use monads to structure procedures that include sequenced operations like those found in structured programming.[4][5] Many common programming concepts can be described in terms of a monad structure without losing the beneficial property of referential transparency, including side effects such as input/output, variable assignment, exception handling, parsing, nondeterminism, concurrency, continuations, or domain-specific languages. This allows these concepts to be defined in a purely functional manner, without major extensions to the language's semantics. Languages like Haskell provide monads in the standard core, allowing programmers to reuse large parts of their formal definition and apply in many different libraries the same interfaces for combining functions.[6]The name and concept comes from category theory, where monads are one particular kind of functor, a mapping between categories. In functional programming contexts, thanks to the specifics of the category used, the term monad denotes what is known as strong monad in category theory.[7]A monad is created by defining a type constructor M and two operations, bind and return (where return is often also called unit):The unary return operation takes a value from a plain type (a) and puts it into a container using the constructor, creating a monadic value (with type M a).The binary bind operation ">>=" takes as its arguments a monadic value with type M a and a function (a → M b) that can transform the value.The bind operator unwraps the plain value with type a embedded in its input monadic value with type M a, and feeds it to the function.The function then creates a new monadic value, with type M b, that can be fed to the next bind operators composed in the pipeline.With these elements, the programmer composes a sequence of function calls (the "pipeline") with several bind operators chained together in an expression. Each function call transforms its input plain type value, and the bind operator handles the returned monadic value, which is fed into the next step in the sequence. Between each pair of composed function calls, the bind operator can inject into the monadic value some additional information that is not accessible within the function, and pass it along. It can also exert finer control of the flow of execution, for example by calling the function only under some conditions, or executing the function calls in a particular order.For example, the following code defines a binary operator x//y as safe division that avoids dividing by zero, using the Maybe monad and its constructors Nothing and Just.[a] The monadic values x and y may have the form Nothing or Just i, where i is an integer. The integer values contained within x and y are extracted into the plain values a and b, which are processed by the plain division operator "/" only when b is not zero.In the fourth example expression, a pipeline that chains together two safe divisions, the result of the first division is Nothing, which is fed as the input value to the second "//" operator; therefore the result is Nothing as well. Notice how the definition of the "//" operator doesn't need to check whether any of its input values is Nothing, as the bind operator of the Maybe monad already handles this concern: by definition of bind, when either the x or the y monadic parameters are Nothing (instead of matching the pattern Just value), the "if b==0 ..." expression is not evaluated.The operations that define the monad must fulfil several properties to allow the correct composition of monadic functions (i.e. functions that use values from the monad as their arguments or return value). Because a monad can insert additional operations around a program's domain logic, monads can be considered a sort of aspect-oriented programming.[8] The domain logic can be defined by the application programmer in the pipeline, while required aside bookkeeping operations can be handled by a pre-defined monad built in advance.</p></section><section><img src="./img/panda.gif" style="width: 50%"></section><!-- <section><pre>
+<code>
+Left Identity: bind(unit(x), f) == f(x)
+Right Identity: bind(x, unit) == x
+Associativity: bind(bind(x, f), g) == bind(x, lambda a: bind(f(a), g))
+</code>
+</pre></section> --><!-- <section><h3>Monad should have: </h3><ul><li>Unit function (value lifter)</li><li>Mapping Function</li><li>Binding Function</li></ul><h1 class="fragment">😕</h1></section> --><section><p>Monad Should Follow:</p><ul class="pt50"><li>Left Identity</li><li>Right Identity</li><li>Associativity</li></ul></section><section><img src="./img/wat.jpg" alt="WAT"></section><section><p>Mama always had a way of explaining things so I could understand them. </p><br><br><p style="font-weight: 300;">Forrest Gump</p></section><section data-background="./img/shellgame.jpg"></section><section data-background="./img/photo/01.jpg"></section><section data-background="./img/photo/02.jpg"></section><section data-background="./img/photo/03.jpg"></section><section data-background="./img/photo/03.jpg"><h1 style="background-color: black;">Monad</h1></section><section data-background="./img/photo/03.jpg"><h1 style="background-color: black; text-transform: none">from()</h1></section><section data-background="./img/photo/04.jpg"></section><section data-background="./img/photo/05.jpg"></section><section data-background="./img/photo/06.jpg"></section><section data-background="./img/photo/07.jpg"></section><section data-background="./img/photo/08.jpg"></section><section data-background="./img/photo/08.jpg"><h1 style="background-color: black;">3 Monads</h1></section><section data-background="./img/photo/09.jpg"></section><section data-background="./img/photo/10.jpg"></section><section data-background="./img/photo/10.jpg"><h1 style="background-color: black; text-transform: none">map()</h1></section><section data-background="./img/photo/11.jpg"></section><section data-background="./img/photo/12.jpg"></section><section data-background="./img/photo/13.jpg"></section><section data-background="./img/photo/14.jpg"></section><section data-background="./img/photo/14.jpg"><h1 style="background-color: black; text-transform: none">flatten()</h1></section><section data-background="./img/photo/15.jpg"></section><section data-background="./img/photo/16.jpg"></section><section data-background="./img/photo/17.jpg"></section><section data-background="./img/photo/17.jpg"><h1 style="background-color: black;">Type Agnostic</h1></section><!-- <section><pre>
+<code class="hljs" data-trim>
+interface Monad {
+  value: any;
+  constructor(value): Monad
+  flatMap(x -> Monad): Monad
+  map(x -> y): Monad
+  flatten(): any: 
+}
+</code>
+</pre></section> --><section><pre>
+<code class="hljs" data-trim>
+interface Monad {
+  value: any;
+  from(value): Monad
+  flatMap(x -> Monad): Monad
+  map(x -> y): Monad
+  flatten(): any: 
+}
+</code>
+</pre></section><!-- <section><pre>
+<code class="hljs" data-trim>
+const res = Monad.of(['Hi Stuttgart'], ['Hello Berlin'])
+	.map(x => x.replace('Hi', 'Hello'))
+	.map(x => x.split(', '))
+	.flatten();
+
+// ['Hi stuttgart']
+</code>
+</pre> --></section><section data-background="#fff"><p>from()</p><img src="./img/lift.gif"></section><section data-background="#fff"><p>from()</p><img class="plain-img" src="./img/from.png"></section><section><p>map()</p><img src="./img/map.gif"></section><section data-background="#fff"><p>map()</p><img class="plain-img" src="./img/map.png"></section><section><p>bind(), chain(), flatmap()</p><img src="./img/flatmap.gif"></section><section data-background="#fff"><p>Bind(), chain(), Flatmap()</p><img class="plain-img" src="./img/map.png"></section><section><p>flatten()</p><img src="./img/some.gif"></section><section data-background="#fff"><p>flatten()</p><img class="plain-img" src="./img/some.png"></section><section><p>Flat Structure</p><pre>
+<code class="hljs" data-trim>
+const data = [1, 2, 3];
+
+data.map(x => [x, x*2, x * 10]);
+[[1, 2, 10], [2, 4, 20], [3, 6, 30]];
+data.flatMap(x => [x, x*2])
+[1, 2, 10, 2, 4, 20, 3, 6, 30];	
+</code>
+</pre></section><section>But it's more about infrastructure around</section><section><p>Monet</p><ul><li>Unit</li><li>Maybe.Some</li><li>Maybe.None</li><li>Maybe.fromNull</li><li>Either</li><li>List</li></ul></section><section><p>Monad.from( <i>5</i> ).map(<i style="color: #fb6b6b;">x=> x + 1</i>).flatten()</p><p style="color: grey">6</p></section><section><p>Map, FlatMap, Filter, Take, ...</p></section><section><p>Maybe.Some(6).filter(x=> x > 10).some()</p><p style="color: grey">null</p></section><section><p>Maybe.Some(6).filter(x=> x > 10).orSome(10)</p><p style="color: grey">10</p></section><section><pre>
+<code class="hljs" data-trim>
+	const fn = x => x > 0 ? Maybe.Some(x) : Maybe.none();
+	Maybe.Some(6).flatMap(fn).some();
+
+	// 10;
+</code>
+</pre></section><section><pre>
+<code class="hljs" data-trim>
+const formatResponse = (res) => Maybe.some({
+	address: Maybe(res.address)
+		.map(formatAddress)
+		.orSome(defaultAddress),
+	name: Maybe.fromNull(res.name)
+
+	....
+
+});
+</code>
+</pre></section><section><p>Rx.js</p><pre>
+<code class="hljs" data-trim>
+countries$.map(getCities).subscribe(save);
+// returns list of observables 
+
+countries$.flatMap(getCities).subscribe(save);
+// returns list of cities
+</code>
+</pre></section><section><h1>Questions?</h1><img src="./img/questions.gif"></section><section data-background="./img/pigeon.jpg" class="dimmed"><h3>Send me a Pigeon</h3><ul><li class="fat-li">facebook / <a href="https://www.facebook.com/tryshchenko">tryshchenko</a></li><li class="fat-li">github / <a href="https://github.com/tryshchenko">tryshchenko</a></li><li class="fat-li">twitter / <a href="https://twitter.com/tryshchenko">tryshchenko</a></li><li class="fat-li"><a href="http://tryshchenko.com">tryshchenko.com</a></li><li class="fat-li"><a href="http://otry.eu" style="color: #ffff41;">otry.eu</a></li></ul></section><section><p>Credits</p><ul class="pt50"><li><a href="https://www.youtube.com/watch?v=4jRtK4_OgIE">Video with a cat</a></li><li><a href="https://unsplash.com/">Photos</a></li><li><a href="//giphy.com">Animations</a></li></ul></section><script src="lib/js/head.min.js"></script><script src="js/reveal.js"></script><script src="js/initialize.js"></script></body></html>
